@@ -1,0 +1,86 @@
+import { AuthUser } from '../board/types/board.types';
+
+export interface UserAccount extends AuthUser {
+  passwordHash: string; // У продакшні використовувати bcrypt
+}
+
+export const USERS_DATABASE: Record<string, UserAccount> = {
+  'admin@workquest.ua': {
+    id: 'user_admin',
+    name: 'Адміністратор',
+    email: 'admin@workquest.ua',
+    role: 'admin',
+    passwordHash: 'Prod++tt',
+    avatarColor: 'from-amber-500 to-red-600',
+    avatarIcon: 'ShieldAlert',
+  },
+  'p1@workquest.ua': {
+    id: 'user_p1',
+    name: 'Олександр К.',
+    email: 'p1@workquest.ua',
+    role: 'editor',
+    participantId: 'p1',
+    passwordHash: 'Prod++tt+1',
+    avatarColor: 'from-emerald-500 to-teal-600',
+    avatarIcon: 'Zap',
+  },
+  'p2@workquest.ua': {
+    id: 'user_p2',
+    name: 'Дмитро М.',
+    email: 'p2@workquest.ua',
+    role: 'editor',
+    participantId: 'p2',
+    passwordHash: 'Prod++tt+2',
+    avatarColor: 'from-blue-500 to-indigo-600',
+    avatarIcon: 'Award',
+  },
+  'p3@workquest.ua': {
+    id: 'user_p3',
+    name: 'Ірина П.',
+    email: 'p3@workquest.ua',
+    role: 'editor',
+    participantId: 'p3',
+    passwordHash: 'Prod++tt+3',
+    avatarColor: 'from-purple-500 to-pink-600',
+    avatarIcon: 'Target',
+  },
+  'p4@workquest.ua': {
+    id: 'user_p4',
+    name: 'Сергій Т.',
+    email: 'p4@workquest.ua',
+    role: 'editor',
+    participantId: 'p4',
+    passwordHash: 'Prod++tt+4',
+    avatarColor: 'from-orange-500 to-amber-600',
+    avatarIcon: 'Activity',
+  },
+  'p5@workquest.ua': {
+    id: 'user_p5',
+    name: 'Анна В.',
+    email: 'p5@workquest.ua',
+    role: 'editor',
+    participantId: 'p5',
+    passwordHash: 'Prod++tt+5',
+    avatarColor: 'from-cyan-500 to-blue-600',
+    avatarIcon: 'CheckCircle2',
+  },
+  'p6@workquest.ua': {
+    id: 'user_p6',
+    name: 'Михайло Б.',
+    email: 'p6@workquest.ua',
+    role: 'editor',
+    participantId: 'p6',
+    passwordHash: 'Prod++tt+6',
+    avatarColor: 'from-violet-500 to-purple-600',
+    avatarIcon: 'FileText',
+  },
+  'viewer@workquest.ua': {
+    id: 'user_viewer',
+    name: 'Глядач',
+    email: 'viewer@workquest.ua',
+    role: 'viewer',
+    passwordHash: 'Viewer2026',
+    avatarColor: 'from-slate-500 to-gray-600',
+    avatarIcon: 'Eye',
+  },
+};
