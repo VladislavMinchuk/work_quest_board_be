@@ -5,17 +5,18 @@ import {
   ConnectedSocket,
   WebSocketServer,
   OnGatewayDisconnect,
+  OnGatewayConnection,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { BoardService } from './board.service';
 import { AuthService } from '../auth/auth.service';
-import { AuthUser, PresenceUser } from './types/board.types';
+import { AuthUser, LocationKey, PresenceUser } from './types/board.types';
 
 @WebSocketGateway({
   path: '/ws',
   cors: { origin: '*' },
 })
-export class BoardGateway implements OnGatewayDisconnect {
+export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
@@ -26,6 +27,41 @@ export class BoardGateway implements OnGatewayDisconnect {
     private readonly boardService: BoardService,
     private readonly authService: AuthService,
   ) {}
+  
+  // Викликається автоматично при КОЖНОМУ новому підключенні
+  async handleConnection(client: Socket) {
+    console.log(`Client connected : ${client.id}`);
+    try {
+      // 1. Отримуємо токен з handshake.auth або headers
+      const token = client.handshake.auth?.token || client.handshake.headers?.authorization;
+
+      if (!token) {
+        client.emit('ERROR', { message: 'Токен авторизації відсутній!' });
+        return client.disconnect();
+      }
+
+      // 2. Декодуємо та перевіряємо токен
+      const user = this.authService.verifyToken(token);
+
+      // 3. ЗБЕРІГАЄМО користувача у даній сокет-сесії
+      client.data.user = user;
+
+      // 4. Додаємо до списку онлайн-користувачів
+      this.activeSessions.set(client.id, {
+        user,
+        socketId: client.id,
+        lastSeen: Date.now(),
+      });
+
+      this.broadcastPresence();
+      
+      this.handleSeedDefaultBoard(client);
+    } catch (error) {
+      client.emit('ERROR', { message: 'Недійсний токен!' });
+      
+      client.disconnect();
+    }
+  }
 
   handleDisconnect(client: Socket) {
     this.activeSessions.delete(client.id);
@@ -47,32 +83,7 @@ export class BoardGateway implements OnGatewayDisconnect {
     this.server.emit('PRESENCE_UPDATE', { activeUsers: presenceList });
   }
 
-  // 1. Клієнт -> Сервер: Авторизація одразу після відкриття сокета
-  @SubscribeMessage('AUTH')
-  async handleAuth(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: { token: string; user: AuthUser },
-  ) {
-    try {
-      const decoded = this.authService.verifyToken(payload.token);
-      
-      // Зберігаємо сесію
-      client.data.user = decoded;
-      this.activeSessions.set(client.id, {
-        user: payload.user || decoded,
-        socketId: client.id,
-        lastSeen: Date.now(),
-      });
-
-      this.broadcastPresence();
-      return { status: 'authenticated' };
-    } catch (e) {
-      client.emit('ERROR', { message: 'Недійсний токен авторизації' });
-      client.disconnect();
-    }
-  }
-
-  // 2. Клієнт -> Сервер: Оновлення статусу завдання
+  // Клієнт -> Сервер: Оновлення статусу завдання
   @SubscribeMessage('UPDATE_TASK')
   async handleUpdateTask(
     @ConnectedSocket() client: Socket,
@@ -80,12 +91,14 @@ export class BoardGateway implements OnGatewayDisconnect {
     payload: {
       periodId: string;
       participantId: string;
-      location: 'ppd' | 'field';
+      location: LocationKey;
       taskKey: string;
       value: string;
       updatedBy: string;
     },
   ) {
+    
+    console.log('Received UPDATE_TASK from client:', payload);
     const user: AuthUser = client.data.user;
 
     if (!user) {
@@ -116,6 +129,24 @@ export class BoardGateway implements OnGatewayDisconnect {
       });
     } catch (error) {
       client.emit('ERROR', { message: error.message || 'Помилка оновлення' });
+    }
+  }
+  
+  @SubscribeMessage('SEED_DEFAULT_BOARD')
+  async handleSeedDefaultBoard(@ConnectedSocket() client: Socket) {
+    const user: AuthUser = client.data.user;
+
+    try {
+      // Отримуємо оновлену матрицю та розсилаємо ВСІМ підключеним клієнтам
+      const fullBoard = await this.boardService.getFullBoard();
+      this.server.emit('BOARD_MUTATED', fullBoard);
+
+      return { status: 'ok', ...fullBoard };
+    } catch (error) {
+      client.emit('ERROR', {
+        event: 'SEED_DEFAULT_BOARD',
+        message: error.message || 'Помилка створення дефолтного борду',
+      });
     }
   }
 }

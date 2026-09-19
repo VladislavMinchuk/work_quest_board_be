@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { USERS_DATABASE } from './user-credentials';
 import { AuthUser } from '../board/types/board.types';
 
@@ -10,10 +11,8 @@ export class AuthService {
   async login(email: string, pass: string) {
     const user = USERS_DATABASE[email];
     
-    // Перевірка пароля (для редакторів p1-p6 за замовчуванням пароль дорівнює їх email або загальному ключу, для Адміна: Prod++tt)
-    const expectedPassword = user?.passwordHash || 'WorkQuest2026';
-
-    if (!user || pass !== expectedPassword) {
+    const isPasswordValid = await bcrypt.compare(pass, user.passwordHash);
+    if (!isPasswordValid) {
       throw new UnauthorizedException('Невірний email або пароль');
     }
 

@@ -10,7 +10,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 8000;
   await app.listen(port);
   console.log(`WorkQuest Backend запущено на порту: ${port}`);
 }
