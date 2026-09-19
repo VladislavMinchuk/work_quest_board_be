@@ -6,7 +6,7 @@ async function bootstrap() {
 
   // Налаштування CORS для Vercel / Netlify
   app.enableCors({
-    origin: '*',
+    origin: process.env.FRONTEND_URL || '*',
     credentials: true,
   });
 

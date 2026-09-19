@@ -14,7 +14,7 @@ import { AuthUser, LocationKey, PresenceUser } from './types/board.types';
 
 @WebSocketGateway({
   path: '/ws',
-  cors: { origin: '*' },
+  cors: { origin: process.env.FRONTEND_URL || '*' },
 })
 export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
