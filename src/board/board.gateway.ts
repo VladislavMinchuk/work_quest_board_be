@@ -128,7 +128,9 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
         timestamp: Date.now(),
       });
     } catch (error) {
-      client.emit('ERROR', { message: error.message || 'Помилка оновлення' });
+      client.emit('ERROR', {
+        message: error instanceof Error ? error.message : 'Помилка оновлення',
+      });
     }
   }
   
@@ -145,7 +147,7 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       client.emit('ERROR', {
         event: 'SEED_DEFAULT_BOARD',
-        message: error.message || 'Помилка створення дефолтного борду',
+        message: error instanceof Error ? error.message : 'Помилка створення дефолтного борду',
       });
     }
   }
