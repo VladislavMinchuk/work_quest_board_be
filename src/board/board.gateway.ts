@@ -94,6 +94,8 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
       location: LocationKey;
       taskKey: string;
       value: string;
+      notes?: string;
+      updatedAt: string;
       updatedBy: string;
     },
   ) {
@@ -114,6 +116,9 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
         payload.location,
         payload.taskKey,
         payload.value,
+        payload.notes,
+        payload.updatedAt,
+        payload.updatedBy
       );
 
       // 3. Сервер -> Усім клієнтам: Сповіщення про оновлення
@@ -123,6 +128,8 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
         location: payload.location,
         taskKey: payload.taskKey,
         value: payload.value,
+        notes: payload.notes,
+        updatedAt: payload.updatedAt,
         updatedBy: user.id,
         updatedByName: user.name,
         timestamp: Date.now(),
@@ -134,7 +141,7 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
   
-  @SubscribeMessage('SEED_DEFAULT_BOARD')
+  @SubscribeMessage('BOARD_STATE')
   async handleSeedDefaultBoard(@ConnectedSocket() client: Socket) {
     const user: AuthUser = client.data.user;
 
@@ -146,8 +153,8 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return { status: 'ok', ...fullBoard };
     } catch (error) {
       client.emit('ERROR', {
-        event: 'SEED_DEFAULT_BOARD',
-        message: error instanceof Error ? error.message : 'Помилка створення дефолтного борду',
+        event: 'BOARD_STATE',
+        message: error instanceof Error ? error.message : 'Помилка при отриманні стану борду',
       });
     }
   }

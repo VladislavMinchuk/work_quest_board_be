@@ -30,12 +30,18 @@ export class BoardService {
       report_card: 'not_started',
       waybills: 'not_started',
       write_off_act: 'not_started',
+      notes: '',
+      updatedAt: new Date().toISOString().split('T')[0],
+      updatedBy: 'System',
     };
 
     const defaultP6: P6LocationTasks = {
       scrapping: 'not_started',
       menu_reqs: 'not_started',
       write_off_act: 'not_started',
+      notes: '',
+      updatedAt: new Date().toISOString().split('T')[0],
+      updatedBy: 'System',
     };
 
     if (participantId === 'p6') {
@@ -117,6 +123,9 @@ export class BoardService {
     location: LocationKey,
     taskKey: string,
     value: string,
+    notes?: string,
+    updatedAt?: string,
+    updatedBy?: string
   ): Promise<CellData> {
     // 1. Авторизація та RBAC
     if (!user) {
@@ -173,8 +182,8 @@ export class BoardService {
     }
 
     cell[location][taskKey] = value;
-    cell.updatedAt = new Date().toISOString().split('T')[0];
-    cell.lastUpdatedBy = user.name || 'Unknown';
+    cell[location].updatedAt = new Date().toISOString().split('T')[0];
+    cell[location].updatedBy = user.name || 'Unknown';
 
     // 5. Запис у Redis
     try {

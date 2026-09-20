@@ -7,13 +7,15 @@ const VALID_PARTICIPANTS = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'] as const;
 export type ParticipantId = (typeof VALID_PARTICIPANTS)[number];
 
 // Словник допустимих статусів для кожного taskKey у StandardLocationTasks
-const TASK_VALUE_SCHEMA: Record<keyof StandardLocationTasks, readonly string[]> = {
+const TASK_VALUE_SCHEMA: Record<string, readonly string[]> = {
   scrapping: ['not_started', 'in_progress', 'done'],
   invoices_breakdown: ['not_started', 'in_progress', 'done'],
   report_card: ['not_started', 'in_progress', 'done'],
   waybills: ['not_started', 'collecting', 'on_desk'],
   write_off_act: ['not_started', 'in_progress', 'signed'],
 };
+
+const FREE_TEXT_KEYS = ['notes', 'updatedAt', 'updatedBy'];
 
 export function parseAndValidatePeriod(periodInput: string): string {
   if (!periodInput || typeof periodInput !== 'string') {
@@ -55,17 +57,20 @@ export function validateParticipantAndLocation(
  * Валідує taskKey та його значення (value) відповідно до схем статусів
  */
 export function validateTaskAndValue(taskKey: string, value: string): void {
-  const allowedValues = TASK_VALUE_SCHEMA[taskKey as keyof StandardLocationTasks];
-
-  // 1. Перевірка наявності taskKey серед StandardLocationTasks
-  if (!allowedValues) {
-    const validKeys = Object.keys(TASK_VALUE_SCHEMA).join(', ');
-    throw new BadRequestException(
-      `Некоректне завдання: "${taskKey}". Дозволені ключі: [${validKeys}]`,
-    );
+  // Якщо це текстове поле — дозволяємо будь-який рядок
+  if (FREE_TEXT_KEYS.includes(taskKey)) {
+    if (typeof value !== 'string') {
+      throw new BadRequestException(`Значення для "${taskKey}" має бути рядком`);
+    }
+    return;
   }
 
-  // 2. Перевірка статусу (value) для даного taskKey
+  const allowedValues = TASK_VALUE_SCHEMA[taskKey];
+
+  if (!allowedValues) {
+    throw new BadRequestException(`Невідомий taskKey: "${taskKey}"`);
+  }
+
   if (!allowedValues.includes(value)) {
     throw new BadRequestException(
       `Некоректний статус "${value}" для завдання "${taskKey}". Дозволені значення: [${allowedValues.join(', ')}]`,

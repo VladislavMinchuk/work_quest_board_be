@@ -25,20 +25,23 @@ export interface StandardLocationTasks {
   report_card: ReportCardStatus;
   waybills: WaybillsStatus;
   write_off_act: WriteOffActStatus;
+  notes?: string; // Додаткове поле для нотаток, якщо потрібно
+  updatedAt?: string;
+  updatedBy?: string;
 }
 
 export interface P6LocationTasks {
   scrapping: ScrappingStatus;
   menu_reqs: MenuReqsStatus;
   write_off_act: WriteOffActStatus;
+  notes?: string; // Додаткове поле для нотаток, якщо потрібно
+  updatedAt?: string;
+  updatedBy?: string;
 }
 
 export interface CellData {
   ppd: StandardLocationTasks | P6LocationTasks;
   field?: StandardLocationTasks;
-  notes?: string;
-  updatedAt?: string;
-  lastUpdatedBy?: string;
 }
 
 export interface PresenceUser {

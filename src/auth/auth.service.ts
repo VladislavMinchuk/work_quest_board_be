@@ -11,7 +11,10 @@ export class AuthService {
   async login(email: string, pass: string) {
     const user = USERS_DATABASE[email];
     
-    const isPasswordValid = await bcrypt.compare(pass, user.passwordHash);
+    if (!user) {
+      throw new UnauthorizedException('Невірний email або пароль');
+    }
+    const isPasswordValid = await bcrypt.compare(pass, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Невірний email або пароль');
     }
@@ -24,7 +27,7 @@ export class AuthService {
       name: user.name,
     };
 
-    const { passwordHash, ...userProfile } = user;
+    const { password, ...userProfile } = user;
 
     return {
       token: this.jwtService.sign(payload),
