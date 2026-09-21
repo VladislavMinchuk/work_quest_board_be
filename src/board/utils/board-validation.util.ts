@@ -13,6 +13,7 @@ const TASK_VALUE_SCHEMA: Record<string, readonly string[]> = {
   report_card: ['not_started', 'in_progress', 'done'],
   waybills: ['not_started', 'collecting', 'on_desk'],
   write_off_act: ['not_started', 'in_progress', 'signed'],
+  menu_reqs: ['not_started', 'in_progress', 'done']
 };
 
 const FREE_TEXT_KEYS = ['notes', 'updatedAt', 'updatedBy'];

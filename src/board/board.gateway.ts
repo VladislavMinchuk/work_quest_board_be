@@ -30,7 +30,6 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
   // Викликається автоматично при КОЖНОМУ новому підключенні
   async handleConnection(client: Socket) {
-    console.log(`Client connected : ${client.id}`);
     try {
       // 1. Отримуємо токен з handshake.auth або headers
       const token = client.handshake.auth?.token || client.handshake.headers?.authorization;
@@ -100,7 +99,6 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
     },
   ) {
     
-    console.log('Received UPDATE_TASK from client:', payload);
     const user: AuthUser = client.data.user;
 
     if (!user) {

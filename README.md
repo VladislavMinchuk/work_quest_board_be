@@ -222,8 +222,6 @@ socket.emit('UPDATE_TASK', {
 Бродкаст-повідомлення усім підключеним клієнтам про те, що хтось оновив комірку борду.
 
 socket.on('TASK_UPDATED', (data: { cellKey: string; cellData: CellData }) => {
-  console.log('Оновлено комірку:', data.cellKey);
-  console.log('Нові дані комірки:', data.cellData);
   // Оновити стейт у React/Redux
 });
 2. BOARD_STATE

@@ -24,8 +24,6 @@ export class WsJwtAuthGuard implements CanActivate {
       // 1. Декодуємо та валідуємо токен
       const payload = await this.jwtService.verifyAsync(token);
       
-      console.log('Payload from token:', payload);
-
       // 2. Знаходимо обліковий запис у USERS_DATABASE
       const foundUser = Object.values(USERS_DATABASE).find(
         (u) => u.email === payload.email || u.id === payload.sub,
