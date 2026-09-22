@@ -7,7 +7,7 @@ export interface UserAccount extends AuthUser {
 export const USERS_DATABASE: Record<string, UserAccount> = {
   'admin@workquest.ua': {
     id: 'user_admin',
-    name: 'Адміністратор',
+    name: ' Admin',
     email: 'admin@workquest.ua',
     role: 'admin',
     password: '$2a$12$tcn63iKAK6j3kVYz8YHYIeNCbxbm6/Bh61Ei0QWIwOfKhJkNQyLla', // 12
@@ -16,7 +16,7 @@ export const USERS_DATABASE: Record<string, UserAccount> = {
   },
   'p1@workquest.ua': {
     id: 'user_p1',
-    name: 'Олександр К.',
+    name: 'Олексій Ч.',
     email: 'p1@workquest.ua',
     role: 'editor',
     participantId: 'p1',
@@ -26,7 +26,7 @@ export const USERS_DATABASE: Record<string, UserAccount> = {
   },
   'p2@workquest.ua': {
     id: 'user_p2',
-    name: 'Дмитро М.',
+    name: 'Олена З.',
     email: 'p2@workquest.ua',
     role: 'editor',
     participantId: 'p2',
@@ -36,7 +36,7 @@ export const USERS_DATABASE: Record<string, UserAccount> = {
   },
   'p3@workquest.ua': {
     id: 'user_p3',
-    name: 'Ірина П.',
+    name: 'Сергій З.',
     email: 'p3@workquest.ua',
     role: 'editor',
     participantId: 'p3',
@@ -46,7 +46,7 @@ export const USERS_DATABASE: Record<string, UserAccount> = {
   },
   'p4@workquest.ua': {
     id: 'user_p4',
-    name: 'Сергій Т.',
+    name: 'Сергій Ф.',
     email: 'p4@workquest.ua',
     role: 'editor',
     participantId: 'p4',
@@ -56,7 +56,7 @@ export const USERS_DATABASE: Record<string, UserAccount> = {
   },
   'p5@workquest.ua': {
     id: 'user_p5',
-    name: 'Анна В.',
+    name: 'Альона Б.',
     email: 'p5@workquest.ua',
     role: 'editor',
     participantId: 'p5',
@@ -66,7 +66,7 @@ export const USERS_DATABASE: Record<string, UserAccount> = {
   },
   'p6@workquest.ua': {
     id: 'user_p6',
-    name: 'Михайло Б.',
+    name: 'Володимир Ц.',
     email: 'p6@workquest.ua',
     role: 'editor',
     participantId: 'p6',
